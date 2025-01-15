@@ -182,4 +182,4 @@ if st.button("Envoyer"):
         if response:
             st.session_state.conversation_history.append({"role": "user", "content": user_input})
             st.session_state.conversation_history.append({"role": "assistant", "content": response})
-        st.experimental_rerun()
+        st.rerun()
