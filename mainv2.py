@@ -158,7 +158,7 @@ user_input = st.text_area(
     "Votre message",
     placeholder="Écrivez ici votre message...",
     label_visibility="collapsed",
-    height=60,
+    height=68,
 )
 
 # Charger un fichier PDF pour un complément contextuel
