@@ -116,7 +116,7 @@ def query_openai_with_context(knowledge_base_text, conversation_history, user_in
 st.title("Nostrum AI")
 
 # Spécifiez le chemin du dossier contenant les fichiers
-directory_path = Path("./contexte")
+directory_path = Path("./Chatgpt/streamlit/contexte")
 
 # Charger la base de connaissances depuis le dossier
 knowledge_base = load_knowledge_base_from_directory(directory_path)
