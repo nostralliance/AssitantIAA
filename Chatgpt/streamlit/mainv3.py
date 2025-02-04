@@ -89,7 +89,7 @@ def extract_text_from_pdf_with_fitz(pdf_file):
 
 # Fonction pour interroger OpenAI avec une base de connaissances, l'historique, et du texte complémentaire
 def query_openai_with_context(knowledge_base_text, conversation_history, user_input, supplemental_text=""):
-    openai.api_key = 'clé_api'
+    openai.api_key = 'sk-svcacct-o02oKC-uWWx0ipescM5BsbE_xsGDz8RXLSLdw_Kl2gtLXKQARdqgzjXgiY-wtD2T3BlbkFJzsk8nOU18KNLXNq92pWp_DYJIiQOJjgL5yON_GbwaoTg6UvCJmLV4b1afEMGwAA'
     try:
         messages = [
             {"role": "system", "content": "Vous êtes un assistant virtuel pour une mutuelle utilisant une base de connaissances issue de plusieurs documents. Si vous ne trouvez pas la réponse adéquate, formulez poliment une réponse. Vous devez parler comme si vous parliez à une personne humaine. Egalement l'idéale serait de demander à la personne si elle n'est pas encore adhérente chez nous et si non alors lui proposer un contrat en fonction de ses besoins. Pour ce faire, il faudra que vous détectiez les besoins de la personne et que vous lui proposiez la formule qui lui convient le mieux."},
