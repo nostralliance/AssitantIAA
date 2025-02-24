@@ -92,10 +92,10 @@ def count_tokens(messages, model="gpt-4o-mini"):
     Compte le nombre total de tokens dans une liste de messages pour un modèle donné.
     """
     # encoding = tiktoken.encoding_for_model(model)
-    total_tokens = 0
-    for message in messages:
-        total_tokens += len(encoding.encode(message["content"]))
-    return total_tokens
+    # total_tokens = 0
+    # for message in messages:
+    #     total_tokens += len(encoding.encode(message["content"]))
+    # return total_tokens
 
 # Fonction pour interroger OpenAI avec une base de connaissances, l'historique, et du texte complémentaire
 def query_openai_with_context(knowledge_base_text, conversation_history, user_input, supplemental_text=""):
