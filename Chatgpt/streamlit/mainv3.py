@@ -99,7 +99,7 @@ def count_tokens(messages, model="gpt-4o-mini"):
 
 # Fonction pour interroger OpenAI avec une base de connaissances, l'historique, et du texte complémentaire
 def query_openai_with_context(knowledge_base_text, conversation_history, user_input, supplemental_text=""):
-    openai.api_key = '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'
+    openai.api_key = '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'
     try:
         messages = [
             {"role": "system", "content": """Vous êtes un assistant virtuel conçu pour une mutuelle qui 
