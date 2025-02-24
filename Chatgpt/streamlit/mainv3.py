@@ -8,6 +8,7 @@ import fitz  # PyMuPDF
 import easyocr
 from pathlib import Path
 import tempfile
+import tiktoken
 
 # Fonction pour charger une base de connaissances depuis différents fichiers
 def load_knowledge_base_from_directory(directory_path):
@@ -21,8 +22,6 @@ def load_knowledge_base_from_directory(directory_path):
                 content.append(load_text_from_pdf(file_path))
             elif file_path.suffix == ".xlsx":
                 content.append(load_text_from_excel(file_path))
-            # elif file_path.suffix == ".html":
-            #     content.append(load_text_from_html(file_path))
         return "\n".join(content)
     except Exception as e:
         st.error(f"Erreur lors du chargement des fichiers dans le dossier : {e}")
@@ -87,20 +86,59 @@ def extract_text_from_pdf_with_fitz(pdf_file):
     except Exception as e:
         return f"Erreur lors de l'extraction du texte : {e}"
 
+# Fonction pour compter les tokens
+def count_tokens(messages, model="gpt-4o-mini"):
+    """
+    Compte le nombre total de tokens dans une liste de messages pour un modèle donné.
+    """
+    encoding = tiktoken.encoding_for_model(model)
+    total_tokens = 0
+    for message in messages:
+        total_tokens += len(encoding.encode(message["content"]))
+    return total_tokens
+
 # Fonction pour interroger OpenAI avec une base de connaissances, l'historique, et du texte complémentaire
 def query_openai_with_context(knowledge_base_text, conversation_history, user_input, supplemental_text=""):
-    openai.api_key = 'sk-svcacct-o02oKC-uWWx0ipescM5BsbE_xsGDz8RXLSLdw_Kl2gtLXKQARdqgzjXgiY-wtD2T3BlbkFJzsk8nOU18KNLXNq92pWp_DYJIiQOJjgL5yON_GbwaoTg6UvCJmLV4b1afEMGwAA'
+    openai.api_key = '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'
     try:
         messages = [
-            {"role": "system", "content": "Vous êtes un assistant virtuel pour une mutuelle utilisant une base de connaissances issue de plusieurs documents. Si vous ne trouvez pas la réponse adéquate, formulez poliment une réponse. Vous devez parler comme si vous parliez à une personne humaine. Egalement l'idéale serait de demander à la personne si elle n'est pas encore adhérente chez nous et si non alors lui proposer un contrat en fonction de ses besoins. Pour ce faire, il faudra que vous détectiez les besoins de la personne et que vous lui proposiez la formule qui lui convient le mieux."},
+            {"role": "system", "content": """Vous êtes un assistant virtuel conçu pour une mutuelle qui 
+            a pour nom Nostrum Care, utilisant une base de connaissances issue de plusieurs documents. Votre rôle principal est de 
+            répondre de manière claire et utile aux questions des utilisateurs, en vous basant sur les 
+            informations disponibles. Si vous ne trouvez pas la réponse adéquate, formulez une réponse 
+            polie et orientez l'utilisateur vers des solutions ou des ressources pertinentes.
+
+            Lorsque cela est pertinent dans la conversation, détectez les besoins de l'utilisateur pour lui proposer, 
+            une offre d'adhésion à la formule qui correspond le mieux à sa situation. 
+            Ne proposez pas systématiquement l'adhésion dès le début, mais privilégiez un moment opportun 
+            dans l'échange pour poser la question et adapter votre suggestion en fonction des besoins exprimés.
+
+            Vous devez également poser des questions utiles et pertinentes pour mieux comprendre le profil 
+            de l'utilisateur et adapter l'offre à ses besoins. Ces questions doivent concerner des éléments 
+            qui peuvent impacter le prix ou la formule d'adhésion. Voici quelques exemples :
+            - "Portez-vous des lunettes ?"
+            - "Tombez-vous souvent malade ?"
+            - "Avez-vous des antécédents médicaux particuliers ?"
+            - "Souhaitez-vous une couverture renforcée pour l'hospitalisation ?"
+            - "Avez-vous des besoins spécifiques en dentaire ou optique ?"
+
+            Ces exemples ne sont pas limitatifs. En fonction des réponses et du contexte de la conversation, 
+            vous pouvez poser d'autres questions pertinentes pour affiner l'offre proposée. Assurez-vous que 
+            vos messages restent concis et faciles à comprendre. Évitez les réponses trop longues et privilégiez 
+            des formulations claires et directes."""},
             {"role": "system", "content": f"Base de connaissances :\n{knowledge_base_text}"}
         ]
+
         messages.extend(conversation_history)
 
         if supplemental_text:
             user_input = f"{user_input}\n\nInformations supplémentaires issues du PDF :\n{supplemental_text}"
 
         messages.append({"role": "user", "content": user_input})
+
+        # Comptez les tokens avant d'envoyer la requête
+        token_count = count_tokens(messages, model="gpt-4o-mini")
+        print(f"Nombre total de tokens envoyés : {token_count}")
 
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini",
@@ -116,7 +154,7 @@ def query_openai_with_context(knowledge_base_text, conversation_history, user_in
 st.title("Nostrum AI")
 
 # Spécifiez le chemin du dossier contenant les fichiers
-directory_path = Path("./Chatgpt/streamlit/contexte")
+directory_path = Path("./contexte")
 
 # Charger la base de connaissances depuis le dossier
 knowledge_base = load_knowledge_base_from_directory(directory_path)
@@ -177,7 +215,6 @@ if st.button("Envoyer"):
         st.warning("Veuillez entrer une question avant d'envoyer.")
     else:
         response = query_openai_with_context(knowledge_base, st.session_state.conversation_history, user_input, supplemental_text)
-        # response = query_openai_with_context(knowledge_base, st.session_state.conversation_history, user_input)
 
         if response:
             st.session_state.conversation_history.append({"role": "user", "content": user_input})
