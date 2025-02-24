@@ -125,7 +125,10 @@ def query_openai_with_context(knowledge_base_text, conversation_history, user_in
             Ces exemples ne sont pas limitatifs. En fonction des réponses et du contexte de la conversation, 
             vous pouvez poser d'autres questions pertinentes pour affiner l'offre proposée. Assurez-vous que 
             vos messages restent concis et faciles à comprendre. Évitez les réponses trop longues et privilégiez 
-            des formulations claires et directes."""},
+            des formulations claires et directes.
+             
+            De plus lorsque tu devra partager le numéro de téléphone c'est celui-ci : 01 62 45 01 05 (appel gratuit)
+            et s'il faut faire un devis sur le site c'est ce lien qu'il faut partager : https://app.nostrumcare.fr/nostrum-vita"""},
             {"role": "system", "content": f"Base de connaissances :\n{knowledge_base_text}"}
         ]
 
