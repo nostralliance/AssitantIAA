@@ -8,7 +8,7 @@ import fitz  # PyMuPDF
 import easyocr
 from pathlib import Path
 import tempfile
-import tiktoken
+# import tiktoken
 
 # Fonction pour charger une base de connaissances depuis différents fichiers
 def load_knowledge_base_from_directory(directory_path):
@@ -91,7 +91,7 @@ def count_tokens(messages, model="gpt-4o-mini"):
     """
     Compte le nombre total de tokens dans une liste de messages pour un modèle donné.
     """
-    encoding = tiktoken.encoding_for_model(model)
+    # encoding = tiktoken.encoding_for_model(model)
     total_tokens = 0
     for message in messages:
         total_tokens += len(encoding.encode(message["content"]))
