@@ -126,6 +126,8 @@ def query_openai_with_context(knowledge_base_text, conversation_history, user_in
             vous pouvez poser d'autres questions pertinentes pour affiner l'offre proposée. Assurez-vous que 
             vos messages restent concis et faciles à comprendre. Évitez les réponses trop longues et privilégiez 
             des formulations claires et directes.
+
+            Si ont te demande un devis envoie lui le document présent dans le dossier qui s'appel fichier 
              
             De plus lorsque tu devra partager le numéro de téléphone c'est celui-ci : 01 62 45 01 05 (appel gratuit)
             et s'il faut faire un devis sur le site c'est ce lien qu'il faut partager : https://app.nostrumcare.fr/nostrum-vita"""},
