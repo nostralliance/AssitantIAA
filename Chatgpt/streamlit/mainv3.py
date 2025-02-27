@@ -27,6 +27,21 @@ def load_knowledge_base_from_directory(directory_path):
         st.error(f"Erreur lors du chargement des fichiers dans le dossier : {e}")
         return ""
 
+# Fonction pour rechercher un fichier de devis dans un dossier spécifique
+def find_devis_file(directory_path):
+    """
+    Recherche un fichier contenant "devis" dans son nom dans le dossier spécifié.
+    Retourne le chemin du premier fichier trouvé.
+    """
+    directory = Path(directory_path)
+    try:
+        for file_path in directory.iterdir():
+            if "devis" in file_path.name.lower() and file_path.suffix in [".pdf", ".docx"]:
+                return file_path  # Retourne le fichier devis trouvé
+    except Exception as e:
+        st.error(f"Erreur lors de la recherche du devis : {e}")
+    return None  # Aucun devis trouvé
+
 # Charger le contenu d'un fichier Word
 def load_text_from_word(file_path):
     try:
@@ -218,10 +233,27 @@ if st.button("Envoyer"):
         st.warning("La base de connaissances n'a pas été chargée correctement.")
     elif not user_input.strip():
         st.warning("Veuillez entrer une question avant d'envoyer.")
-    else:
-        response = query_openai_with_context(knowledge_base, st.session_state.conversation_history, user_input, supplemental_text)
+else:
+        # Vérifier si l'utilisateur demande un devis
+        if "devis" in user_input.lower():
+            devis_file = find_devis_file("./fichier")  # Recherche dans le dossier "fichier" 
+            if devis_file:
+                with open(devis_file, "rb") as file:
+                    st.download_button(
+                        label="📄 Télécharger votre devis",
+                        data=file,
+                        file_name=devis_file.name,
+                        mime="application/pdf" if devis_file.suffix == ".pdf" else "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    )
+                st.success("Un devis a été trouvé et est disponible en téléchargement !")
+            else:
+                st.warning("Aucun devis trouvé dans le dossier. Veuillez contacter le service client.")
 
-        if response:
-            st.session_state.conversation_history.append({"role": "user", "content": user_input})
-            st.session_state.conversation_history.append({"role": "assistant", "content": response})
-        st.rerun()
+        else:
+            # L'utilisateur ne demande pas de devis, donc on interroge OpenAI
+            response = query_openai_with_context(knowledge_base, st.session_state.conversation_history, user_input, supplemental_text)
+
+            if response:
+                st.session_state.conversation_history.append({"role": "user", "content": user_input})
+                st.session_state.conversation_history.append({"role": "assistant", "content": response})
+            st.rerun()
