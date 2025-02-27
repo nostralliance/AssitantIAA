@@ -236,7 +236,7 @@ if st.button("Envoyer"):
 else:
         # Vérifier si l'utilisateur demande un devis
         if "devis" in user_input.lower():
-            devis_file = find_devis_file("./fichier")  # Recherche dans le dossier "fichier" 
+            devis_file = find_devis_file("./fichier/Chatgpt/streamlit/")  # Recherche dans le dossier "fichier" 
             if devis_file:
                 with open(devis_file, "rb") as file:
                     st.download_button(
