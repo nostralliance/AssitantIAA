@@ -233,7 +233,7 @@ if st.button("Envoyer"):
         st.warning("La base de connaissances n'a pas été chargée correctement.")
     elif not user_input.strip():
         st.warning("Veuillez entrer une question avant d'envoyer.")
-else:
+    else:
         # Vérifier si l'utilisateur demande un devis
         if "devis" in user_input.lower():
             devis_file = find_devis_file("./fichier/Chatgpt/streamlit/")  # Recherche dans le dossier "fichier" 
